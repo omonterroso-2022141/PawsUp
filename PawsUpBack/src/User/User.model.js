@@ -7,23 +7,32 @@ const userSchema = Schema({
     },
     username: {
         type: String,
+        unique: true,
         required: true
     },
     email: {
         type: String,
+        match: [/\S+@\S+\.\S+/, 'Please enter a valid email'],
         required: true
     },
     edad: {
         type: String,
         required: true
     },
-    passwor: {
+    password: {
         type: String,
+        minLength: [6, 'Password must contain 8 or more characters'],
         required: true
     },
     coin: {
         type: Number,
         default: 10
+    },
+    role: {
+        type: String,
+        uppercase: true,
+        enum: ['CLIENT', 'ADMIN', 'SERVICE'],
+        default: 'CLIENT'
     }
 })
 
