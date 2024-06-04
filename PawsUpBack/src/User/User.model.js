@@ -28,6 +28,12 @@ const userSchema = Schema({
         type: Number,
         default: 10
     },
+    /*
+    perfil: {
+        type: String,
+        required: true
+    },
+    */
     role: {
         type: String,
         uppercase: true,

@@ -3,7 +3,7 @@ import { checkPassword, encrypt } from '../Utils/Validator.js'
 import User from './User.model.js'
 
 export const testUser = (req, res)=>{
-    return res.send({message: 'Connected to User'})
+    return res.send({message: 'Conectado a User'})
 }
 
 export const register = async(req, res)=>{
@@ -76,7 +76,6 @@ export const updateUser = async (req, res) => {
         let data = req.body
         let user = await User.findOne({ _id: id })
 
-        console.log(data);
         if(data.length == 0) return res.status(404).send({message: 'Sin datos ha actualizar'})
 
         if(!user) return res.status(400).send({message: 'Usuario no encontrado'})
@@ -101,8 +100,9 @@ export const deleteUser = async (req, res) => {
         let { id } = req.params
         let { password } = req.body
         let user = await User.findOne({_id:id})
-        
-        if (user && await checkPassword(password, user.password)) {
+
+        if(!user || !password) return res.status(404).send({ message: 'Credenciales Invalidas' })
+        if (await checkPassword(password, user.password)) {
             let deletedUser = await User.deleteOne({ _id: id })
             if (deletedUser.deleteCount == 0) return res.status(404).send({ message: 'Usuario no se pudo eliminar' })
             return res.send({ message: 'Cuenta eliminada con exito' })
