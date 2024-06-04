@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 
+class LostDogsFeedPage extends StatelessWidget {
+  const LostDogsFeedPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 10,
+      itemBuilder: (BuildContext context, int index) {
+        return const PostWidget();
+      },
+    );
+  }
+}
+
 class PostWidget extends StatefulWidget {
   const PostWidget({super.key});
 
@@ -80,9 +94,7 @@ class _PostWidgetState extends State<PostWidget>
                     ),
                     const Spacer(),
                     PopupMenuButton<String>(
-                      onSelected: (String value) {
-                        // Implement actions based on the selected value
-                      },
+                      onSelected: (String value) {},
                       itemBuilder: (BuildContext context) {
                         return {'Reportar', 'Ocultar'}.map((String choice) {
                           return PopupMenuItem<String>(
@@ -96,9 +108,7 @@ class _PostWidgetState extends State<PostWidget>
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  // Implement image tap action
-                },
+                onTap: () {},
                 child: ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(15)),

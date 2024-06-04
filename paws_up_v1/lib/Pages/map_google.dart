@@ -144,8 +144,8 @@ class _MapGoogleState extends State<MapGoogle>
               child: FloatingActionButton(
                 onPressed: _addMarker,
                 tooltip: 'Agregar marcador',
-                child: const Icon(Icons.add_location),
                 backgroundColor: Colors.green[700],
+                child: const Icon(Icons.add_location),
               ),
             ),
           ),
