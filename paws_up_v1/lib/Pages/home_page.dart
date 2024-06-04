@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'feed_page.dart';
 import 'map_google.dart';
@@ -12,8 +13,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
+  late AnimationController _controller;
+  late Animation<double> _fadeInFadeOut;
 
   static const List<Widget> _widgetOptions = <Widget>[
     FeedPage(),
@@ -23,10 +27,38 @@ class _HomePageState extends State<HomePage> {
     ProfilePage(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeInFadeOut =
+        Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _controller.forward();
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _controller.reverse().then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        _controller.forward();
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,7 +82,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: FadeTransition(
+        opacity: _fadeInFadeOut,
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
