@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:paws_up_v1/Pages/add_post_page.dart';
 
+import 'category_page.dart';
 import 'lost_dogs_feed_page.dart';
 
 import 'map_google.dart';
 import 'normal_feed_page.dart';
-import 'notifications_page.dart';
+
 import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -69,7 +71,7 @@ class _HomePageState extends State<HomePage>
       _showLostDogsOnly ? const LostDogsFeedPage() : const NormalFeedPage(),
       const MapGoogle(),
       const AddPostPage(),
-      const NotificationsPage(),
+      const CategoryPage(),
       const ProfilePage(),
     ];
 
@@ -88,10 +90,8 @@ class _HomePageState extends State<HomePage>
         backgroundColor: Colors.black,
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.filter_alt,
-                color: Color(0xFF5BFFD3)),
+            icon: const Icon(Icons.filter_alt, color: Color(0xFF5BFFD3)),
             onPressed: () => _toggleLostDogsOnly(!_showLostDogsOnly),
-
           ),
           IconButton(
             icon: const Icon(Icons.local_grocery_store_rounded,
@@ -109,7 +109,6 @@ class _HomePageState extends State<HomePage>
         backgroundColor: Colors.black,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-
             icon: Icon(Icons.home),
             label: 'Home',
           ),
@@ -135,17 +134,6 @@ class _HomePageState extends State<HomePage>
         unselectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),
-    );
-  }
-}
-
-class AddPostPage extends StatelessWidget {
-  const AddPostPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Add Post Page'),
     );
   }
 }
