@@ -40,7 +40,49 @@ class MyApp extends StatelessWidget {
         url:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
         time: "Hace 2 horas",
-        isVideo: false)
+        isVideo: false),
+    Story(
+        username: "Ruben",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
+    Story(
+        username: "Joshua",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
+    Story(
+        username: "Josue",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
+    Story(
+        username: "Brayna",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
+    Story(
+        username: "Miim",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
+    Story(
+        username: "Fernando",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
+    Story(
+        username: "Vanesa",
+        url:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        time: "Hace 2 horas",
+        isVideo: false),
   ];
 
   @override
@@ -201,17 +243,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Historias'),
       ),
       body: ListView.builder(
+        scrollDirection: Axis.horizontal,
         itemCount: widget.stories.length,
         itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: widget.stories[index].isVideo
-                  ? AssetImage(
-                      'assets/video_icon.png') // Placeholder icon for video
-                  : NetworkImage(widget.stories[index].url),
-            ),
-            title: Text(widget.stories[index].username),
-            subtitle: Text(widget.stories[index].time),
+          return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
@@ -221,6 +256,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               );
             },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: widget.stories[index].isVideo
+                        ? AssetImage('assets/video_icon.png')
+                        : NetworkImage(widget.stories[index].url),
+                    radius: 30,
+                  ),
+                  SizedBox(height: 5),
+                  Text(widget.stories[index].username),
+                ],
+              ),
+            ),
           );
         },
       ),
