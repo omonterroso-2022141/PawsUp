@@ -13,12 +13,14 @@ class Story {
   final String url;
   final String time;
   final bool isVideo;
+  bool seen;
 
   Story(
       {required this.username,
       required this.url,
       required this.time,
-      required this.isVideo});
+      required this.isVideo,
+      this.seen = false});
 }
 
 class MyApp extends StatelessWidget {
@@ -44,43 +46,42 @@ class MyApp extends StatelessWidget {
     Story(
         username: "Ruben",
         url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+            "https://i0.wp.com/dibujokawaii.com/wp-content/uploads/2022/12/como-dibujar-pinguino-kawaii.png?w=1000&ssl=1",
         time: "Hace 2 horas",
         isVideo: false),
     Story(
         username: "Joshua",
-        url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+        url: "https://media.tenor.com/MjYaFKjKQakAAAAM/dapper-dog.gif",
         time: "Hace 2 horas",
         isVideo: false),
     Story(
         username: "Josue",
         url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+            "https://png.pngtree.com/thumb_back/fh260/background/20230527/pngtree-dog-s-face-looking-up-at-the-camera-image_2677403.jpg",
         time: "Hace 2 horas",
         isVideo: false),
     Story(
         username: "Brayna",
         url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+            "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1252512247-645a3670a0276.jpg?crop=1xw:1xh;center,top&resize=980:*",
         time: "Hace 2 horas",
         isVideo: false),
     Story(
         username: "Miim",
         url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+            "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1469836274-645a3672bc1be.jpg?crop=1xw:1xh;center,top&resize=980:*",
         time: "Hace 2 horas",
         isVideo: false),
     Story(
         username: "Fernando",
         url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+            "https://m.media-amazon.com/images/I/61pHnfSM6CL._AC_UF894,1000_QL80_.jpg",
         time: "Hace 2 horas",
         isVideo: false),
     Story(
         username: "Vanesa",
         url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpcnUd4DnHAsDY3i3_Cf2GEUp_ungbJ30i6-DqrVw8KVY-RbLDfXfGgdlO8kPT9YuB5UQ&usqp=CAU",
         time: "Hace 2 horas",
         isVideo: false),
   ];
@@ -136,6 +137,37 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  bool isStoryExpired(String time) {
+    try {
+    final storyTime = DateTime.parse(time);
+    final now = DateTime.now();
+    final difference = now.difference(storyTime);
+    return difference.inHours >= 24;
+    } catch (e) {
+      print('Error parsig time: $e');
+      return false;
+    }
+  } 
+
+  void _showExpiredStoryDialog() {
+    showDialog(context: context, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Historia no disponible'),
+        content: Text('Esta historia ya no está disponible.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          ),
+        ],
+      );
+    },
+    );
+  }
+
   void _addStory({String? imagePath, String? videoPath}) {
     final now = DateTime.now();
     final newStory = Story(
@@ -147,6 +179,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       widget.stories.insert(0, newStory);
+    });
+  }
+
+  void _markAsSeen(int index) {
+    setState(() {
+      widget.stories[index].seen = true;
     });
   }
 
@@ -246,28 +284,47 @@ class _MyHomePageState extends State<MyHomePage> {
         scrollDirection: Axis.horizontal,
         itemCount: widget.stories.length,
         itemBuilder: (BuildContext context, int index) {
+          final story = widget.stories[index];
           return GestureDetector(
             onTap: () {
+              if (isStoryExpired(story.time)) {
+                _showExpiredStoryDialog();
+              } else {
+              _markAsSeen(index);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      StoryScreen(story: widget.stories[index]),
-                ),
-              );
+                      StoryScreen(story: story),
+                 ),
+               );
+              }
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
+                  Stack(
+                    children: [
                   CircleAvatar(
-                    backgroundImage: widget.stories[index].isVideo
+                    backgroundImage: story.isVideo
                         ? AssetImage('assets/video_icon.png')
-                        : NetworkImage(widget.stories[index].url),
+                        : NetworkImage(story.url),
                     radius: 30,
                   ),
-                  SizedBox(height: 5),
-                  Text(widget.stories[index].username),
+                    Container(
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: story.seen ? Colors.grey : Colors.cyan,
+                        width: 3.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+                SizedBox(height: 5),
+                Text(story.username),
                 ],
               ),
             ),
