@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'Settings.dart'; // Asegúrate de importar la página de ajustes
-
+import 'package:paws_up_v1/Pages/chat_page.dart';
+import 'package:paws_up_v1/Pages/profile_page.dart';
+import 'Settings.dart';
 import 'add_post_page.dart';
-import 'gategory_page.dart';
+import 'category_page.dart';
 import 'lost_dogs_feed_page.dart';
 import 'map_google.dart';
 import 'normal_feed_page.dart';
-import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -20,8 +20,8 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   bool _showLostDogsOnly = false;
-  late AnimationController _controller;
-  late Animation<double> _fadeInFadeOut;
+  late final AnimationController _controller;
+  late final Animation<double> _fadeInFadeOut;
 
   @override
   void initState() {
@@ -36,19 +36,17 @@ class _HomePageState extends State<HomePage>
         curve: Curves.easeInOut,
       ),
     );
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       _controller.forward();
     });
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _controller.reverse().then((_) {
-        setState(() {
-          _selectedIndex = index;
-        });
-        _controller.forward();
+    _controller.reverse().then((_) {
+      setState(() {
+        _selectedIndex = index;
       });
+      _controller.forward();
     });
   }
 
@@ -66,7 +64,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _widgetOptions = <Widget>[
+    final List<Widget> _widgetOptions = <Widget>[
       _showLostDogsOnly ? const LostDogsFeedPage() : const NormalFeedPage(),
       const MapGoogle(),
       const AddPostPage(),
@@ -77,8 +75,12 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        // Elimina el botón de retroceso
+        automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon:
+              const Icon(Icons.shopping_bag_rounded, color: Color(0xFF5BFFD3)),
+          onPressed: () {},
+        ),
         title: const Text(
           'PawsUp',
           style: TextStyle(
@@ -94,7 +96,7 @@ class _HomePageState extends State<HomePage>
                 IconButton(
                   icon: const Icon(Icons.settings, color: Color(0xFF5BFFD3)),
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => SettingsPage()),
                     );
@@ -103,13 +105,19 @@ class _HomePageState extends State<HomePage>
               ]
             : [
                 IconButton(
-                  icon: const Icon(Icons.filter_alt, color: Color(0xFF5BFFD3)),
+                  icon:
+                      const Icon(Icons.pets_outlined, color: Color(0xFF5BFFD3)),
                   onPressed: () => _toggleLostDogsOnly(!_showLostDogsOnly),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.local_grocery_store_rounded,
+                  icon: const Icon(Icons.message_rounded,
                       color: Color(0xFF5BFFD3)),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ChatPage()),
+                    );
+                  },
                 ),
               ],
       ),
@@ -143,7 +151,7 @@ class _HomePageState extends State<HomePage>
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF5BFFD3),
+        selectedItemColor: const Color(0xFF5BFFD3),
         unselectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),

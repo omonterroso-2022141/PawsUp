@@ -11,9 +11,10 @@ class CategoryPage extends StatelessWidget {
       },
       child: Scaffold(
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/fondebb.png'), // Ruta de la imagen local
+              image: NetworkImage(
+                  'https://github.com/jrosselin-2022050/IMG_PAWSUP/blob/main/fondebb.png?raw=true'), // Ruta de la imagen local
               fit: BoxFit.cover,
             ),
           ),
@@ -24,11 +25,19 @@ class CategoryPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
-                    style: TextStyle(color: Colors.white), // Color del texto de búsqueda
+                    style: const TextStyle(
+                      color: Colors.white, // Color del texto de búsqueda
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Buscar...',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.8)), // Color del texto de sugerencia
-                      prefixIcon: const Icon(Icons.search, color: Colors.white), // Color del icono de búsqueda
+                      hintStyle: TextStyle(
+                        color: Colors.white
+                            .withOpacity(0.8), // Color del texto de sugerencia
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.white, // Color del icono de búsqueda
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
@@ -182,7 +191,7 @@ class PostCard extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
-                    color: Color(0xFF5BFFD3), // Texto blanco
+                    color: Color(0xFF5BFFD3), // Texto de color
                   ),
                 ),
                 const SizedBox(height: 4.0),
@@ -212,11 +221,19 @@ class PostCard extends StatelessWidget {
               children: <Widget>[
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.info, size: 20, color: Color(0xFF5BFFD3)), // Icono rojo
+                  icon: const Icon(
+                    Icons.info,
+                    size: 20,
+                    color: Color(0xFF5BFFD3), // Icono de color
+                  ),
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.share, size: 20, color: Color(0xFF5BFFD3)), // Icono rojo
+                  icon: const Icon(
+                    Icons.share,
+                    size: 20,
+                    color: Color(0xFF5BFFD3), // Icono de color
+                  ),
                 ),
               ],
             ),

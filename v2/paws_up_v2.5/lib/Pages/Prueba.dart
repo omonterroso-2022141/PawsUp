@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
 import 'lost_dogs_feed_page.dart';
 import 'map_google.dart';
 import 'normal_feed_page.dart';
@@ -65,7 +64,8 @@ class Prueba {
             onPressed: () => _toggleLostDogsOnly(!_showLostDogsOnly),
           ),
           IconButton(
-            icon: const Icon(Icons.local_grocery_store_rounded, color: Color(0xFF5BFFD3)),
+            icon: const Icon(Icons.local_grocery_store_rounded,
+                color: Color(0xFF5BFFD3)),
             onPressed: () {},
           ),
         ],

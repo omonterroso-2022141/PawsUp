@@ -3,6 +3,7 @@
         android:label="paws_up_v1"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
          <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyBs2lOkc7xTfnd5Yf7c5UNm3i4ztaQgSPo"/>
         <activity

@@ -12,7 +12,7 @@ class SettingsPage extends StatelessWidget {
           'images/fonde.png',
           fit: BoxFit.cover,
         ),
-        title: Text(
+        title: const Text(
           'Ajustes',
           style: TextStyle(
             fontSize: 40,
@@ -20,13 +20,14 @@ class SettingsPage extends StatelessWidget {
             fontFamily: "Meow",
           ),
         ),
-        backgroundColor: Color(0xFF5BFFD3),
+        backgroundColor: const Color(0xFF5BFFD3),
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: Colors.white),
+            icon: const Icon(Icons.home, color: Colors.white),
             onPressed: () {
               // Navegar a la otra página
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePage()));
             },
           ),
         ],
@@ -37,7 +38,7 @@ class SettingsPage extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                ListTile(
+                const ListTile(
                   title: Text(
                     'Ajustes de Cuenta',
                     style: TextStyle(
@@ -47,11 +48,12 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   tileColor: Colors.black,
-                  contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                 ),
                 ListTile(
-                  leading: Icon(Icons.person, color: Color(0xFF5BFFD3)),
-                  title: Text(
+                  leading: const Icon(Icons.person, color: Color(0xFF5BFFD3)),
+                  title: const Text(
                     'Informacion Personal',
                     style: TextStyle(
                       color: Colors.white,
@@ -74,8 +76,8 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.lock, color: Color(0xFF5BFFD3)),
-                  title: Text(
+                  leading: const Icon(Icons.lock, color: Color(0xFF5BFFD3)),
+                  title: const Text(
                     'Cambiar contraseña',
                     style: TextStyle(
                       color: Colors.white,
@@ -87,11 +89,11 @@ class SettingsPage extends StatelessWidget {
                     // Navegar a la página de cambio de contraseña
                   },
                 ),
-                Divider(
+                const Divider(
                   color: Color(0xFF5BFFD3),
                   thickness: 1,
                 ),
-                ListTile(
+                const ListTile(
                   title: Text(
                     'Ajustes Generales',
                     style: TextStyle(
@@ -101,11 +103,13 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   tileColor: Colors.black,
-                  contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                 ),
                 ListTile(
-                  leading: Icon(Icons.color_lens, color: Color(0xFF5BFFD3)),
-                  title: Text(
+                  leading:
+                      const Icon(Icons.color_lens, color: Color(0xFF5BFFD3)),
+                  title: const Text(
                     'Tema',
                     style: TextStyle(
                       color: Colors.white,
@@ -125,8 +129,8 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.language, color: Color(0xFF5BFFD3)),
-                  title: Text(
+                  leading: const Icon(Icons.language, color: Color(0xFF5BFFD3)),
+                  title: const Text(
                     'Idioma',
                     style: TextStyle(
                       color: Colors.white,
@@ -146,8 +150,8 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.info, color: Color(0xFF5BFFD3)),
-                  title: Text(
+                  leading: const Icon(Icons.info, color: Color(0xFF5BFFD3)),
+                  title: const Text(
                     'Informacion',
                     style: TextStyle(
                       color: Colors.white,
@@ -178,7 +182,7 @@ class SettingsPage extends StatelessWidget {
                   // Implementar la lógica de cierre de sesión
                 },
                 highlightColor: Colors.grey[400], // Color de fondo al presionar
-                child: ListTile(
+                child: const ListTile(
                   title: Center(
                     child: Text(
                       'Cerrar Sesion',
