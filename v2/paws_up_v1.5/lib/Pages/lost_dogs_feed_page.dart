@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-
 class LostDogsFeedPage extends StatelessWidget {
   const LostDogsFeedPage({Key? key}) : super(key: key);
 
@@ -23,7 +22,6 @@ class LostDogsFeedPage extends StatelessWidget {
     );
   }
 }
-
 
 class PostWidget extends StatefulWidget {
   const PostWidget({super.key});
@@ -96,21 +94,24 @@ class _PostWidgetState extends State<PostWidget>
                         Text(
                           'LaRatoneraFreeFireTri6777',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: "Hey"
-                          ),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontFamily: "Hey"),
                         ),
                         SizedBox(height: 4),
-                        Text('6 h', style: TextStyle(fontSize: 12,
-                          color: Colors.white,)),
+                        Text('6 h',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                            )),
                       ],
                     ),
                     const Spacer(),
                     Theme(
                       data: Theme.of(context).copyWith(
-                        iconTheme: IconThemeData(color: Color(0xFF5BFFD3)), // Cambia el color a rojo
+                        iconTheme: IconThemeData(
+                            color: Color(0xFF5BFFD3)), // Cambia el color a rojo
                       ),
                       child: PopupMenuButton<String>(
                         onSelected: (String value) {},
@@ -124,7 +125,6 @@ class _PostWidgetState extends State<PostWidget>
                         },
                       ),
                     )
-
                   ],
                 ),
               ),
@@ -145,9 +145,8 @@ class _PostWidgetState extends State<PostWidget>
                 padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Laky, se perdió hace 5 horas es una perrita de...',
-                  style: TextStyle(fontSize: 16,
-                    color: Colors.white,
-                  fontFamily: "Hey"),
+                  style: TextStyle(
+                      fontSize: 16, color: Colors.white, fontFamily: "Hey"),
                 ),
               ),
               Padding(
@@ -162,28 +161,38 @@ class _PostWidgetState extends State<PostWidget>
                               color: Color(0xFF5BFFD3)),
                           onPressed: () {},
                         ),
-                        const Text('123',
-                          style: TextStyle(fontSize: 15,
-                          color: Colors.white,),),
+                        const Text(
+                          '123',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
                         const SizedBox(width: 16),
                         IconButton(
                           icon: const Icon(Icons.comment_outlined,
                               color: Color(0xFF5BFFD3)),
                           onPressed: () {},
                         ),
-                        const Text('45',
-                          style: TextStyle(fontSize: 15,
-                            color: Colors.white,),),
+                        const Text(
+                          '45',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
                       ],
                     ),
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.info, color: Color(0xFF5BFFD3)),
+                          icon:
+                              const Icon(Icons.info, color: Color(0xFF5BFFD3)),
                           onPressed: () {},
                         ),
                         IconButton(
-                          icon: const Icon(Icons.share, color: Color(0xFF5BFFD3)),
+                          icon:
+                              const Icon(Icons.share, color: Color(0xFF5BFFD3)),
                           onPressed: () {},
                         ),
                       ],

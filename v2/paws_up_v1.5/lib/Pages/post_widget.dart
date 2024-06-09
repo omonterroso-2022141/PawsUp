@@ -113,7 +113,7 @@ class _PostWidgetState extends State<PostWidget>
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Laky, se perdió hace 5 horas es una perrita de...',
+                  'Laky, se perdió hace 5 horas es una perrita de..',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
