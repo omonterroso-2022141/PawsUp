@@ -122,17 +122,18 @@ class _LoginFormState extends State<LoginForm> {
   String _response = '';
 
   Future<void> _login() async {
-    final String baseUrl = 'https://back-paws-up-cloud.vercel.app';
+    const String baseUrl = 'https://back-paws-up-cloud.vercel.app';
 
     final response = await http.post(
       Uri.parse('$baseUrl/User/login'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'username': _usernameController.text,
+        'email': _usernameController.text,
         'password': _passwordController.text,
       }),
     );
-
+    
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -151,7 +152,7 @@ class _LoginFormState extends State<LoginForm> {
       }
     } else {
       setState(() {
-        _response = 'Error: ${response.statusCode}';
+        _response = 'Error: ${response.body}';
       });
     }
   }
@@ -159,7 +160,6 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
-    print('Token guardado: $token');
   }
 
   @override

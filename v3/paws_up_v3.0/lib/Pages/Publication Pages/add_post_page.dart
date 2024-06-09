@@ -114,15 +114,35 @@ class _AddPostPageState extends State<AddPostPage> {
     }
   }
 
-  void _submitPost() {
+  void _submitPost() async{
     String name = nameController.text;
     String age = ageController.text;
     String description = descriptionController.text;
     String location = locationController.text;
     String sex = selectedSex ?? '';
 
-    // Implement the logic to handle the form submission
-    // You can send this data to your backend or further process it as needed
+    // Construye el cuerpo de la solicitud
+    Map<String, dynamic> postData = {
+      'descripcion': description,
+      // Agrega cualquier otro campo necesario
+    };
+
+    // Realiza la solicitud HTTP al backend
+    final response = await http.post(
+      'https://back-paws-up-cloud.vercel.app/Publicacion/addPublicacion' as Uri,
+      body: postData,
+    );
+
+    // Verifica si la solicitud fue exitosa
+    if (response.statusCode == 200) {
+      // Maneja la respuesta del backend
+      print('Publicación agregada correctamente');
+    } else {
+      // Maneja el caso en que la solicitud no sea exitosa
+      print('Error al agregar la publicación: ${response.statusCode}');
+    }
+      // Implement the logic to handle the form submission
+      // You can send this data to your backend or further process it as needed
   }
 
   @override
