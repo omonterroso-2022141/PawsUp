@@ -17,8 +17,7 @@ class _MapGoogleState extends State<MapGoogle>
   LatLng _lastMapPosition = const LatLng(14.64072, -90.51327);
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-  BitmapDescriptor?
-      customIcon; // Variable para almacenar tu icono personalizado
+  BitmapDescriptor? customIcon; // Variable para almacenar tu icono personalizado
 
   @override
   void initState() {
@@ -71,13 +70,11 @@ class _MapGoogleState extends State<MapGoogle>
     });
     _animationController.forward();
   }
-
   void _showPetDetails() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
       builder: (context) {
         return SlideTransition(
           position: _slideAnimation,
@@ -106,27 +103,17 @@ class _MapGoogleState extends State<MapGoogle>
                           children: [
                             Text(
                               'Buscamos a Oreo',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(
-                                      0xFF5BFFD3)), // Cambia el color del texto a rojo
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF5BFFD3)), // Cambia el color del texto a rojo
                             ),
                             const SizedBox(height: 4.0),
                             Text(
                               'GFXV+G72, Guatemala City, Gua...',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors
-                                      .white), // Cambia el color del texto a blanco
+                              style: TextStyle(fontSize: 14, color: Colors.white), // Cambia el color del texto a blanco
                             ),
                             const SizedBox(height: 2.0),
                             Text(
                               'Perdido hace 5 meses',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(
-                                      0xFF5BFFD3)), // Cambia el color del texto a blanco
+                              style: TextStyle(fontSize: 12, color: Color(0xFF5BFFD3)), // Cambia el color del texto a blanco
                             ),
                           ],
                         ),
@@ -136,14 +123,9 @@ class _MapGoogleState extends State<MapGoogle>
                   const SizedBox(height: 8.0),
                   Text(
                     'Descripción:',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(
-                            0xFF5BFFD3)), // Cambia el color del texto a blanco
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF5BFFD3)), // Cambia el color del texto a blanco
                   ),
-                  const SizedBox(
-                      height: 4.0), // Reducir el espacio después del título
+                  const SizedBox(height: 4.0), // Reducir el espacio después del título
                   GestureDetector(
                     onTap: () {
                       // Navegar a la página con información detallada
@@ -151,10 +133,7 @@ class _MapGoogleState extends State<MapGoogle>
                     },
                     child: Text(
                       'Oreo es un perro de raza Labrador Retriever de color negro. Tiene un collar rojo y es muy amigable con las personas. Se perdió en el área de la Ciudad de Guatemala.',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors
-                              .white), // Cambia el color del texto a blanco
+                      style: TextStyle(fontSize: 14, color: Colors.white), // Cambia el color del texto a blanco
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -185,6 +164,7 @@ class _MapGoogleState extends State<MapGoogle>
       },
     );
   }
+
 
   @override
   void dispose() {
@@ -232,6 +212,7 @@ class _MapGoogleState extends State<MapGoogle>
               ),
             ),
           )
+
         ],
       ),
     );

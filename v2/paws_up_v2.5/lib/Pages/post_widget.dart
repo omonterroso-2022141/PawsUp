@@ -1,27 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-class LostDogsFeedPage extends StatelessWidget {
-  const LostDogsFeedPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("images/fondebb.png"), // Ruta a tu imagen de fondo
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (BuildContext context, int index) {
-          return const PostWidget();
-        },
-      ),
-    );
-  }
-}
 
 class PostWidget extends StatefulWidget {
   const PostWidget({super.key});
@@ -70,7 +47,6 @@ class _PostWidgetState extends State<PostWidget>
       child: SlideTransition(
         position: _slideAnimation,
         child: Card(
-          color: Colors.black,
           margin: const EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -92,44 +68,37 @@ class _PostWidgetState extends State<PostWidget>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'LaRatoneraFreeFireTri6777',
+                          'MONTERROSO',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: "Hey"),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                         SizedBox(height: 4),
-                        Text('6 h',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white,
-                            )),
+                        Text('6 h', style: TextStyle(fontSize: 12)),
                       ],
                     ),
                     const Spacer(),
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        iconTheme: IconThemeData(
-                            color: Color(0xFF5BFFD3)), // Cambia el color a rojo
-                      ),
-                      child: PopupMenuButton<String>(
-                        onSelected: (String value) {},
-                        itemBuilder: (BuildContext context) {
-                          return {'Reportar', 'Ocultar'}.map((String choice) {
-                            return PopupMenuItem<String>(
-                              value: choice,
-                              child: Text(choice),
-                            );
-                          }).toList();
-                        },
-                      ),
-                    )
+                    PopupMenuButton<String>(
+                      onSelected: (String value) {
+                        // Implement actions based on the selected value
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return {'Reportar', 'Ocultar'}.map((String choice) {
+                          return PopupMenuItem<String>(
+                            value: choice,
+                            child: Text(choice),
+                          );
+                        }).toList();
+                      },
+                    ),
                   ],
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  // Implement image tap action
+                },
                 child: ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(15)),
@@ -137,7 +106,7 @@ class _PostWidgetState extends State<PostWidget>
                     'https://via.placeholder.com/400x300',
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: 430,
+                    height: 250,
                   ),
                 ),
               ),
@@ -145,8 +114,7 @@ class _PostWidgetState extends State<PostWidget>
                 padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Laky, se perdió hace 5 horas es una perrita de...',
-                  style: TextStyle(
-                      fontSize: 16, color: Colors.white, fontFamily: "Hey"),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
               Padding(
@@ -157,42 +125,26 @@ class _PostWidgetState extends State<PostWidget>
                     Row(
                       children: [
                         IconButton(
-                          icon: FaIcon(FontAwesomeIcons.bone,
-                              color: Color(0xFF5BFFD3)),
+                          icon: const Icon(Icons.thumb_up_alt_outlined),
                           onPressed: () {},
                         ),
-                        const Text(
-                          '123',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                          ),
-                        ),
+                        const Text('123'),
                         const SizedBox(width: 16),
                         IconButton(
-                          icon: const Icon(Icons.comment_outlined,
-                              color: Color(0xFF5BFFD3)),
+                          icon: const Icon(Icons.comment_outlined),
                           onPressed: () {},
                         ),
-                        const Text(
-                          '45',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                          ),
-                        ),
+                        const Text('45'),
                       ],
                     ),
                     Row(
                       children: [
                         IconButton(
-                          icon:
-                              const Icon(Icons.info, color: Color(0xFF5BFFD3)),
+                          icon: const Icon(Icons.info, color: Colors.teal),
                           onPressed: () {},
                         ),
                         IconButton(
-                          icon:
-                              const Icon(Icons.share, color: Color(0xFF5BFFD3)),
+                          icon: const Icon(Icons.share, color: Colors.teal),
                           onPressed: () {},
                         ),
                       ],

@@ -12,8 +12,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'PawsUp',
-      theme: ThemeData(),
-      home: Login(),
+      theme: ThemeData(
+      ),
+      home:  Login(),
     );
   }
 }
