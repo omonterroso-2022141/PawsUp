@@ -76,11 +76,12 @@ class _HomePageState extends State<HomePage>
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         automaticallyImplyLeading: true,
+        /*
         leading: IconButton(
           icon:
               const Icon(Icons.shopping_bag_rounded, color: Color(0xFF5BFFD3)),
           onPressed: () {},
-        ),
+        ),*/
         title: const Text(
           'PawsUp',
           style: TextStyle(
@@ -109,7 +110,7 @@ class _HomePageState extends State<HomePage>
                       const Icon(Icons.pets_outlined, color: Color(0xFF5BFFD3)),
                   onPressed: () => _toggleLostDogsOnly(!_showLostDogsOnly),
                 ),
-                IconButton(
+                /*IconButton(
                   icon: const Icon(Icons.message_rounded,
                       color: Color(0xFF5BFFD3)),
                   onPressed: () {
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage>
                       MaterialPageRoute(builder: (context) => const ChatPage()),
                     );
                   },
-                ),
+                ),*/
               ],
       ),
       body: FadeTransition(

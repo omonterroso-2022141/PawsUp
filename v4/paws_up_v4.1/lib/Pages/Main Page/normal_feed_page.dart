@@ -251,14 +251,14 @@ class _PostWidgetState extends State<PostWidget> {
                         style:
                             const TextStyle(fontSize: 15, color: Colors.white)),
                     const SizedBox(width: 16),
-                    IconButton(
+                    /*IconButton(
                       icon: const Icon(Icons.comment_outlined,
                           color: Color(0xFF5BFFD3)),
                       onPressed: widget.onComment,
-                    ),
-                    Text('${widget.publicacion.comentarios.length}',
+                    ),*/
+                    /*Text('${widget.publicacion.comentarios.length}',
                         style:
-                            const TextStyle(fontSize: 15, color: Colors.white)),
+                            const TextStyle(fontSize: 15, color: Colors.white)),*/
                   ],
                 ),
                 Row(

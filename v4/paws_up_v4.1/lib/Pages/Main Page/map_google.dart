@@ -8,7 +8,6 @@ import 'dart:convert';
 class Mascota {
   final String nombre;
   final String edad;
-  //final String imagen;
   final String ubicacion;
   final String descripcion;
   final String sexo;
@@ -16,7 +15,6 @@ class Mascota {
   Mascota({
     required this.nombre,
     required this.edad,
-    //required this.imagen,
     required this.ubicacion,
     required this.descripcion,
     required this.sexo,
@@ -26,7 +24,6 @@ class Mascota {
     return Mascota(
       nombre: json['nombre'],
       edad: json['edad'],
-      //imagen: json['imagen'],
       ubicacion: json['ubicacion'],
       descripcion: json['descripcion'],
       sexo: json['sexo'],
@@ -49,7 +46,7 @@ Future<List<Mascota>> fetchMascotas() async {
 
 // Clave API de Google Maps
 const kGoogleApiKey =
-    "YOUR_GOOGLE_MAPS_API_KEY"; // Reemplaza con tu clave de API de Google Maps
+    "AIzaSyBs2lOkc7xTfnd5Yf7c5UNm3i4ztaQgSPo"; // Reemplaza con tu clave de API de Google Maps
 
 // Clase para la búsqueda de direcciones
 class AddressSearch extends SearchDelegate<String> {
@@ -81,6 +78,10 @@ class AddressSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
+    if (query.isEmpty) {
+      return const Center(child: Text('Ingrese una dirección.'));
+    }
+
     return FutureBuilder<List<Location>>(
       future: locationFromAddress(query),
       builder: (context, snapshot) {
@@ -122,6 +123,10 @@ class AddressSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    if (query.isEmpty) {
+      return const Center(child: Text('Ingrese una dirección.'));
+    }
+
     return FutureBuilder<List<Location>>(
       future: locationFromAddress(query),
       builder: (context, snapshot) {
@@ -157,7 +162,7 @@ class AddressSearch extends SearchDelegate<String> {
 
 // Clase principal del mapa
 class MapGoogle extends StatefulWidget {
-  const MapGoogle({super.key});
+  const MapGoogle({Key? key}) : super(key: key);
 
   @override
   _MapGoogleState createState() => _MapGoogleState();
@@ -167,8 +172,8 @@ class _MapGoogleState extends State<MapGoogle>
     with SingleTickerProviderStateMixin {
   late GoogleMapController _mapController;
   final Set<Marker> _markers = {};
-  LatLng _lastMapPosition =
-      const LatLng(14.625718299308714, -90.53585792927943);
+  LatLng _lastMapPosition = const LatLng(
+      14.634915, -90.506882); // Coordenadas de la Ciudad de Guatemala
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   bool _isSatellite = false;
@@ -229,11 +234,19 @@ class _MapGoogleState extends State<MapGoogle>
   }
 
   Future<LatLng> _getLatLngFromAddress(String address) async {
-    List<Location> locations = await locationFromAddress(address);
-    if (locations.isNotEmpty) {
-      return LatLng(locations[0].latitude, locations[0].longitude);
-    } else {
-      throw Exception('No location found for address: $address');
+    if (address.isEmpty) {
+      throw Exception('La dirección está vacía.');
+    }
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return LatLng(locations[0].latitude, locations[0].longitude);
+      } else {
+        throw Exception('No location found for address: $address');
+      }
+    } catch (e) {
+      throw Exception(
+          'Error fetching location for address: $address. Details: $e');
     }
   }
 
@@ -319,33 +332,44 @@ class _MapGoogleState extends State<MapGoogle>
       context: context,
       delegate: AddressSearch(_mapController),
     );
-    if (place != null) {
-      List<Location> locations = await locationFromAddress(place);
-      if (locations.isNotEmpty) {
-        final latLng = LatLng(locations[0].latitude, locations[0].longitude);
-        _mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: latLng,
-              zoom: 15,
-            ),
-          ),
-        );
-
-        setState(() {
-          _lastMapPosition = latLng;
-          _markers.clear();
-          _markers.add(
-            Marker(
-              markerId: MarkerId(_lastMapPosition.toString()),
-              position: _lastMapPosition,
-              infoWindow: InfoWindow(
-                title: place,
-                snippet: '',
+    if (place != null && place.isNotEmpty) {
+      try {
+        List<Location> locations = await locationFromAddress(place);
+        if (locations.isNotEmpty) {
+          final latLng = LatLng(locations[0].latitude, locations[0].longitude);
+          _mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: latLng,
+                zoom: 15,
               ),
             ),
           );
-        });
+
+          setState(() {
+            _lastMapPosition = latLng;
+            _markers.clear();
+            _markers.add(
+              Marker(
+                markerId: MarkerId(_lastMapPosition.toString()),
+                position: _lastMapPosition,
+                infoWindow: InfoWindow(
+                  title: place,
+                  snippet: '',
+                ),
+              ),
+            );
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('No se encontraron ubicaciones para "$place".')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al buscar la ubicación: $e')),
+        );
       }
     }
   }

@@ -111,35 +111,61 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   Future<void> _searchLocation() async {
-    final Prediction? p = await showSearch<Prediction?>(
+    final LatLng? selectedLocation = await showDialog<LatLng>(
       context: context,
-      delegate: PlacesAutocompleteDelegate(_fetchPlacePredictions),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Seleccione la ubicación'),
+          content: Container(
+            height: 300.0,
+            width: 300.0,
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                    14.6622765, -90.4899868), // Cambia la posición inicial aquí
+                zoom: 15,
+              ),
+              onTap: (LatLng latLng) {
+                Navigator.of(context).pop(latLng);
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null);
+              },
+              child: Text('Cancelar'),
+            ),
+          ],
+        );
+      },
     );
 
-    if (p != null) {
-      final LatLng latLng = await _getLatLngFromPlaceId(p.placeId!);
-
+    if (selectedLocation != null) {
       setState(() {
-        selectedLocation = latLng;
-        locationController.text = p.description!;
+        this.selectedLocation = selectedLocation;
+        locationController.text =
+            '${selectedLocation.latitude}, ${selectedLocation.longitude}';
       });
 
       mapController?.animateCamera(
-        CameraUpdate.newLatLngZoom(selectedLocation!, 15.0),
+        CameraUpdate.newLatLngZoom(selectedLocation, 15.0),
       );
     }
   }
 
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(
-      Uri.parse('https://back-paws-up-cloud.vercel.app/Categoria/listCategoryUsuario'),
+      Uri.parse(
+          'https://back-paws-up-cloud.vercel.app/Categoria/listCategoryUsuario'),
       headers: {'Authorization': userToken},
     );
 
     if (response.statusCode == 200) {
       final dynamic data = jsonDecode(response.body);
       print(data);
-      
+
       final categoryData = data['categorys'];
       final category = Category.fromJson(categoryData);
       return [category];
@@ -156,7 +182,7 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   void _submitPost({required bool someParameter}) async {
-    if(someParameter){
+    if (someParameter) {
       if (userToken.isEmpty) {
         print('Token no disponible.');
         return;
@@ -206,30 +232,36 @@ class _AddPostPageState extends State<AddPostPage> {
       } catch (error) {
         print('Error: $error');
       }
-    }else{
-
+    } else {
       if (userToken.isEmpty) {
         print('Token no disponible.');
         return;
       }
 
-      var url = Uri.parse('https://back-paws-up-cloud.vercel.app/Mascota/addMascota');
+      var url =
+          Uri.parse('https://back-paws-up-cloud.vercel.app/Mascota/addMascota');
 
       try {
-        var headers = {'Authorization': userToken, 'Accept': '*/*', 'Content-Type': 'application/json'};
-        
+        var headers = {
+          'Authorization': userToken,
+          'Accept': '*/*',
+          'Content-Type': 'application/json'
+        };
+
         // Hacer la solicitud POST con los datos JSON como cuerpo
-        var response = await http.post(
-          url, 
-          headers: headers,
-          body: json.encode({
-            'nombre': nameController.text.isEmpty ? 'Nulo' : nameController.text,
-            'edad': ageController.text.isEmpty ? 'Nulo' : ageController.text,
-            'descripcion': descriptionController.text.isEmpty ? 'Nulo' : descriptionController.text,
-            'tutor': userToken,
-            'ubicacion': '14.6622765, -90.4899868',
-            'sexo': selectedSex ?? ''
-          }));
+        var response = await http.post(url,
+            headers: headers,
+            body: json.encode({
+              'nombre':
+                  nameController.text.isEmpty ? 'Nulo' : nameController.text,
+              'edad': ageController.text.isEmpty ? 'Nulo' : ageController.text,
+              'descripcion': descriptionController.text.isEmpty
+                  ? 'Nulo'
+                  : descriptionController.text,
+              'tutor': userToken,
+              'ubicacion': '14.6622765, -90.4899868',
+              'sexo': selectedSex ?? ''
+            }));
 
         if (response.statusCode == 200) {
           print('Publicación exitosa');
@@ -329,15 +361,12 @@ class _AddPostPageState extends State<AddPostPage> {
                       maxLines: 3),
                   const SizedBox(height: 16.0),
                   _buildDropdownButtonFormFieldSexo(
-                    'Sexo',
-                    selectedSex,
-                    ['HEMBRA', 'MACHO', 'TERRENEITOR'],
-                    (String? newValue) {
-                      setState(() {
-                        selectedSex = newValue!;
-                      });
-                    }
-                  ),
+                      'Sexo', selectedSex, ['HEMBRA', 'MACHO', 'TERRENEITOR'],
+                      (String? newValue) {
+                    setState(() {
+                      selectedSex = newValue!;
+                    });
+                  }),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: _pickMedia,
@@ -351,7 +380,6 @@ class _AddPostPageState extends State<AddPostPage> {
                     ),
                     child: const Text('Adjuntar Foto'),
                   ),
-                  
                   const SizedBox(height: 16.0),
                   _mediaFiles != null && _mediaFiles!.isNotEmpty
                       ? Image.file(File(_mediaFiles!.first.path))
@@ -382,7 +410,7 @@ class _AddPostPageState extends State<AddPostPage> {
                           : {},
                     ),
                   ),
-                  const SizedBox(height: 16.0), 
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: () => _submitPost(someParameter: false),
                     style: ElevatedButton.styleFrom(
@@ -495,7 +523,6 @@ class _AddPostPageState extends State<AddPostPage> {
     );
   }
 
-
   Widget _buildDropdownButtonFormField(
     String label,
     String? value,
@@ -525,7 +552,9 @@ class _AddPostPageState extends State<AddPostPage> {
         // Busca la categoría correspondiente al nombre seleccionado
         final selectedCategory = categories.firstWhere(
           (category) => category.nombre == newValue,
-          orElse: () => Category(id: '', nombre: ''), // Manejar caso donde no se encuentra la categoría
+          orElse: () => Category(
+              id: '',
+              nombre: ''), // Manejar caso donde no se encuentra la categoría
         );
         // Llama a la función externa pasando el nombre y el _id de la categoría
         onChanged(newValue, selectedCategory.id);
@@ -602,20 +631,20 @@ class Prediction {
 
 // Esta función puede ayudar a determinar el tipo MIME basado en la extensión del archivo
 String lookupMimeType(String path) {
-    final extension = path.split('.').last.toLowerCase();
-    switch (extension) {
-        case 'jpg':
-        case 'jpeg':
-            return 'image/jpeg';
-        case 'png':
-            return 'image/png';
-        case 'mp4':
-            return 'video/mp4';
-        case 'avi':
-            return 'video/x-msvideo';
-        case 'mov':
-            return 'video/quicktime';
-        default:
-            return 'application/octet-stream';
-    }
+  final extension = path.split('.').last.toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'mp4':
+      return 'video/mp4';
+    case 'avi':
+      return 'video/x-msvideo';
+    case 'mov':
+      return 'video/quicktime';
+    default:
+      return 'application/octet-stream';
+  }
 }

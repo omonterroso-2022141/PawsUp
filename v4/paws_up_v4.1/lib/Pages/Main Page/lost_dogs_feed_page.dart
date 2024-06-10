@@ -26,16 +26,17 @@ class Publicacion {
   });
 
   factory Publicacion.fromJson(Map<String, dynamic> json) {
+    print('Parsing JSON: $json');
     return Publicacion(
-      id: json['_id'] ?? '',
-      autor: json['tutor'] ?? '',
-      horaPublicado: json['horaPublicado'] ?? '',
-      nombre: json['nombre'] ?? '',
-      edad: json['edad'] ?? '',
-      imagen: json['imagen'] ?? '',
-      ubicacion: json['ubicacion'] ?? '',
-      descripcion: json['descripcion'] ?? '',
-      sexo: json['sexo'] ?? '',
+      id: json['_id']?.toString() ?? '',
+      autor: json['tutor']?.toString() ?? '',
+      horaPublicado: json['horaPublicado']?.toString() ?? '',
+      nombre: json['nombre']?.toString() ?? '',
+      edad: json['edad']?.toString() ?? '',
+      imagen: json['imagen']?.toString() ?? '',
+      ubicacion: json['ubicacion']?.toString() ?? '',
+      descripcion: json['descripcion']?.toString() ?? '',
+      sexo: json['sexo']?.toString() ?? '',
     );
   }
 }
@@ -45,8 +46,18 @@ Future<List<Publicacion>> fetchPublicaciones() async {
       Uri.parse('https://back-paws-up-cloud.vercel.app/Mascota/viewMascota'));
 
   if (response.statusCode == 200) {
-    final List<dynamic> mascotasJson = json.decode(response.body)['mascotas'];
-    return mascotasJson.map((json) => Publicacion.fromJson(json)).toList();
+    final Map<String, dynamic> data = json.decode(response.body);
+    print('Response Data: $data');
+
+    if (data['mascotas'] is List) {
+      final List<dynamic> mascotasJson = data['mascotas'];
+      for (var mascota in mascotasJson) {
+        print('Mascota JSON: $mascota');
+      }
+      return mascotasJson.map((json) => Publicacion.fromJson(json)).toList();
+    } else {
+      throw Exception('La respuesta no contiene una lista de mascotas');
+    }
   } else {
     throw Exception('Failed to load mascotas');
   }
@@ -255,4 +266,4 @@ class PostWidget extends StatelessWidget {
       ),
     );
   }
-} 
+}
