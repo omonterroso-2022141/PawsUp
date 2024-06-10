@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -11,79 +12,81 @@ void main() {
 class Story {
   final String username;
   final String url;
-  final String time;
+  final DateTime time;
   final bool isVideo;
   bool seen;
 
-  Story(
-      {required this.username,
-      required this.url,
-      required this.time,
-      required this.isVideo,
-      this.seen = false});
+  Story({
+    required this.username,
+    required this.url,
+    required this.time,
+    required this.isVideo,
+    this.seen = false,
+  });
 }
 
 class MyApp extends StatelessWidget {
   final List<Story> stories = [
     Story(
-        username: "Bachac",
-        url:
-            "https://img.buzzfeed.com/buzzfeed-static/static/2017-09/13/12/asset/buzzfeed-prod-fastlane-03/sub-buzz-4660-1505320964-2.png?downsize=700%3A%2A&output-quality=auto&output-format=auto",
-        time: "Hace 10 horas",
-        isVideo: false),
+      username: "Bachac",
+      url:
+          "https://img.buzzfeed.com/buzzfeed-static/static/2017-09/13/12/asset/buzzfeed-prod-fastlane-03/sub-buzz-4660-1505320964-2.png?downsize=700%3A%2A&output-quality=auto&output-format=auto",
+      time: DateTime.now().subtract(Duration(hours: 10)),
+      isVideo: false,
+    ),
     Story(
         username: "Yerick",
         url:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSndVZhWXuWgeTSh0nTVxm_84bULEUYwezEQ&s",
-        time: "Hace 3 horas",
+        time: DateTime.now().subtract(Duration(hours: 3)),
         isVideo: false),
     Story(
         username: "Miguelito",
         url:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
-        time: "Hace 2 horas",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Ruben",
         url:
             "https://i0.wp.com/dibujokawaii.com/wp-content/uploads/2022/12/como-dibujar-pinguino-kawaii.png?w=1000&ssl=1",
-        time: "Hace 2 horas",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Joshua",
         url: "https://media.tenor.com/MjYaFKjKQakAAAAM/dapper-dog.gif",
-        time: "Hace 2 horas",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Josue",
         url:
-            "https://png.pngtree.com/thumb_back/fh260/background/20230527/pngtree-dog-s-face-looking-up-at-the-camera-image_2677403.jpg",
-        time: "Hace 2 horas",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyXzjjPPHwioU-Wr_NEE7UTmQUejmqE9HEwA&s",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Brayna",
         url:
             "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1252512247-645a3670a0276.jpg?crop=1xw:1xh;center,top&resize=980:*",
-        time: "Hace 2 horas",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Miim",
         url:
             "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1469836274-645a3672bc1be.jpg?crop=1xw:1xh;center,top&resize=980:*",
-        time: "Hace 2 horas",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Fernando",
         url:
             "https://m.media-amazon.com/images/I/61pHnfSM6CL._AC_UF894,1000_QL80_.jpg",
-        time: "Hace 2 horas",
+        time: DateTime.now().subtract(Duration(hours: 10)),
         isVideo: false),
     Story(
         username: "Vanesa",
         url:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpcnUd4DnHAsDY3i3_Cf2GEUp_ungbJ30i6-DqrVw8KVY-RbLDfXfGgdlO8kPT9YuB5UQ&usqp=CAU",
-        time: "Hace 2 horas",
-        isVideo: false),
+        time: DateTime.now().subtract(Duration(hours: 10)),
+        isVideo: false)
   ];
 
   @override
@@ -112,16 +115,29 @@ class _MyHomePageState extends State<MyHomePage> {
   XFile? _imageFile;
   XFile? _videoFile;
 
+  ImageProvider _buildImageProvider(Story story) {
+    try {
+      if (story.url.startsWith('http')) {
+        return NetworkImage(story.url);
+      } else {
+        return FileImage(File(story.url));
+      }
+    } catch (e) {
+      print('Error loading image: $e');
+      return AssetImage('assets/error_image.png');
+    }
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(
       source: source,
       imageQuality: 50,
     );
-    setState(() {
-      _imageFile = pickedFile;
-    });
-    if (_imageFile != null) {
-      _addStory(imagePath: _imageFile!.path);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = pickedFile;
+      });
+      _addStory(imagePath: pickedFile.path);
     }
   }
 
@@ -129,57 +145,53 @@ class _MyHomePageState extends State<MyHomePage> {
     final pickedFile = await _picker.pickVideo(
       source: source,
     );
-    setState(() {
-      _videoFile = pickedFile;
-    });
-    if (_videoFile != null) {
-      _addStory(videoPath: _videoFile!.path);
+    if (pickedFile != null) {
+      setState(() {
+        _videoFile = pickedFile;
+      });
+      _addStory(videoPath: pickedFile.path);
     }
   }
 
-  bool isStoryExpired(String time) {
-    try {
-    final storyTime = DateTime.parse(time);
+  bool isStoryExpired(DateTime storyTime) {
     final now = DateTime.now();
     final difference = now.difference(storyTime);
     return difference.inHours >= 24;
-    } catch (e) {
-      print('Error parsig time: $e');
-      return false;
-    }
-  } 
+  }
 
   void _showExpiredStoryDialog() {
-    showDialog(context: context, 
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Historia no disponible'),
-        content: Text('Esta historia ya no está disponible.'),
-        actions: <Widget>[
-          TextButton(
-            child: Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          ),
-        ],
-      );
-    },
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Historia no disponible'),
+          content: Text('Esta historia ya no está disponible.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _addStory({String? imagePath, String? videoPath}) {
-    final now = DateTime.now();
-    final newStory = Story(
-      username: "Yo",
-      url: imagePath ?? videoPath!,
-      time: "Hace unos momentos",
-      isVideo: videoPath != null,
-    );
-
-    setState(() {
-      widget.stories.insert(0, newStory);
-    });
+    if (imagePath != null || videoPath != null) {
+      final now = DateTime.now();
+      final newStory = Story(
+        username: "Yo",
+        url: imagePath ?? videoPath!,
+        time: now,
+        isVideo: videoPath != null,
+      );
+      setState(() {
+        widget.stories.insert(0, newStory);
+      });
+    }
   }
 
   void _markAsSeen(int index) {
@@ -188,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _showPicker(context) {
+  void _showPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext bc) {
@@ -290,14 +302,13 @@ class _MyHomePageState extends State<MyHomePage> {
               if (isStoryExpired(story.time)) {
                 _showExpiredStoryDialog();
               } else {
-              _markAsSeen(index);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      StoryScreen(story: story),
-                 ),
-               );
+                _markAsSeen(index);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StoryScreen(story: story),
+                  ),
+                );
               }
             },
             child: Padding(
@@ -306,25 +317,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Stack(
                     children: [
-                  CircleAvatar(
-                    backgroundImage: story.isVideo
-                        ? AssetImage('assets/video_icon.png')
-                        : NetworkImage(story.url),
-                    radius: 30,
-                  ),
-                    Container(
-                      decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: story.seen ? Colors.grey : Colors.cyan,
-                        width: 3.0,
+                      CircleAvatar(
+                        backgroundImage: _buildImageProvider(
+                            story), // Utiliza el método _buildImageProvider
+                        radius: 30,
                       ),
-                    ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: story.seen ? Colors.grey : Colors.cyan,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-                SizedBox(height: 5),
-                Text(story.username),
+                  SizedBox(height: 5),
+                  Text(story.username),
                 ],
               ),
             ),
@@ -346,35 +359,39 @@ class StoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int duration = Random().nextInt(11) + 5;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(story.username),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (story.isVideo)
-              VideoPlayerWidget(videoFile: XFile(story.url))
-            else
-              CircleAvatar(
-                backgroundImage: FileImage(File(story.url)),
-                radius: 100,
-              ),
-            SizedBox(height: 20),
-            Text(
-              story.username,
-              style: TextStyle(fontSize: 19, color: Colors.grey),
-            )
-          ],
-        ),
+        child: story.isVideo
+            ? VideoPlayerWidget(videoFile: File(story.url))
+            : (story.url.startsWith('http')
+                ? Image.network(story.url,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity)
+                : Image.file(
+                    File(story.url),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  )),
       ),
     );
   }
 }
 
 class VideoPlayerWidget extends StatefulWidget {
-  final XFile videoFile;
+  final File videoFile;
 
   const VideoPlayerWidget({required this.videoFile});
 
@@ -384,16 +401,28 @@ class VideoPlayerWidget extends StatefulWidget {
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
+  late int duration;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.file(File(widget.videoFile.path))
+    duration =
+        Random().nextInt(11) + 5; // Random duration between 5 and 15 seconds
+    _controller = VideoPlayerController.file(widget.videoFile)
       ..initialize().then((_) {
         setState(() {});
-        _controller.play(); // Auto-play the video
-        _controller.setLooping(true); // Loop the video
+        _controller.play();
+        _controller.setLooping(true);
+        _startTimer();
       });
+  }
+
+  void _startTimer() {
+    Future.delayed(Duration(seconds: duration), () {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   @override
@@ -408,7 +437,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 }
