@@ -159,6 +159,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return difference.inHours >= 24;
   }
 
+  void _reorderStories() {
+    final seenStories = <Story>[];
+    final unseenStories = <Story>[];
+
+    for (final story in widget.stories) {
+      if (story.seen) {
+        seenStories.add(story);
+      } else {
+        unseenStories.add(story);
+      }
+    }
+
+    widget.stories.clear();
+    widget.stories.addAll(seenStories);
+    widget.stories.addAll(unseenStories);
+  }
+
   void _markAsSeen(int index) {
     setState(() {
       widget.stories[index].seen = true;
@@ -256,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _reorderStories();
     return Scaffold(
       appBar: AppBar(
         title: Text('Historias'),
