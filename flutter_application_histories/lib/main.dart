@@ -159,44 +159,21 @@ class _MyHomePageState extends State<MyHomePage> {
     return difference.inHours >= 24;
   }
 
-  void _showExpiredStoryDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Historia no disponible'),
-          content: Text('Esta historia ya no está disponible.'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _addStory({String? imagePath, String? videoPath}) {
-    if (imagePath != null || videoPath != null) {
-      final now = DateTime.now();
-      final newStory = Story(
-        username: "Yo",
-        url: imagePath ?? videoPath!,
-        time: now,
-        isVideo: videoPath != null,
-      );
-      setState(() {
-        widget.stories.insert(0, newStory);
-      });
-    }
-  }
-
   void _markAsSeen(int index) {
     setState(() {
       widget.stories[index].seen = true;
+    });
+  }
+
+  void _addStory({String? imagePath, String? videoPath}) {
+    final newStory = Story(
+      username: 'New User',
+      url: imagePath ?? videoPath!,
+      time: DateTime.now(),
+      isVideo: videoPath != null,
+    );
+    setState(() {
+      widget.stories.add(newStory);
     });
   }
 
@@ -210,51 +187,24 @@ class _MyHomePageState extends State<MyHomePage> {
               ListTile(
                 leading: Icon(Icons.photo_library),
                 title: Text('Galería'),
-                onTap: () async {
-                  var status = await Permission.photos.status;
-                  if (!status.isGranted) {
-                    if (await Permission.photos.request().isGranted) {
-                      _pickImage(ImageSource.gallery);
-                    } else {
-                      _showPermissionDialog();
-                    }
-                  } else {
-                    _pickImage(ImageSource.gallery);
-                  }
+                onTap: () {
+                  _requestPermissionAndPickImage(ImageSource.gallery);
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
                 leading: Icon(Icons.photo_camera),
                 title: Text('Cámara'),
-                onTap: () async {
-                  var status = await Permission.camera.status;
-                  if (!status.isGranted) {
-                    if (await Permission.camera.request().isGranted) {
-                      _pickImage(ImageSource.camera);
-                    } else {
-                      _showPermissionDialog();
-                    }
-                  } else {
-                    _pickImage(ImageSource.camera);
-                  }
+                onTap: () {
+                  _requestPermissionAndPickImage(ImageSource.camera);
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
                 leading: Icon(Icons.videocam),
-                title: Text('Grabar video'),
-                onTap: () async {
-                  var status = await Permission.camera.status;
-                  if (!status.isGranted) {
-                    if (await Permission.camera.request().isGranted) {
-                      _pickVideo(ImageSource.camera);
-                    } else {
-                      _showPermissionDialog();
-                    }
-                  } else {
-                    _pickVideo(ImageSource.camera);
-                  }
+                title: Text('Grabar Video'),
+                onTap: () {
+                  _requestPermissionAndPickVideo(ImageSource.camera);
                   Navigator.of(context).pop();
                 },
               ),
@@ -265,14 +215,32 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _showPermissionDialog() {
+  Future<void> _requestPermissionAndPickImage(ImageSource source) async {
+    final status = await Permission.camera.request();
+    if (status == PermissionStatus.granted) {
+      _pickImage(source);
+    } else {
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  Future<void> _requestPermissionAndPickVideo(ImageSource source) async {
+    final status = await Permission.camera.request();
+    if (status == PermissionStatus.granted) {
+      _pickVideo(source);
+    } else {
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  void _showPermissionDeniedDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Permiso necesario'),
+          title: Text('Permiso denegado'),
           content: Text(
-              'Es necesario permitir el acceso a la cámara y a la galería para seleccionar o tomar fotos o grabar videos.'),
+              'No se han otorgado permisos para acceder a la cámara. Por favor, permite el acceso para seleccionar o tomar fotos o grabar videos.'),
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
@@ -318,8 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Stack(
                     children: [
                       CircleAvatar(
-                        backgroundImage: _buildImageProvider(
-                            story), // Utiliza el método _buildImageProvider
+                        backgroundImage: _buildImageProvider(story),
                         radius: 30,
                       ),
                       Positioned(
@@ -350,6 +317,26 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  void _showExpiredStoryDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Historia expirada'),
+          content: Text('Esta historia ha expirado.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class StoryScreen extends StatelessWidget {
@@ -359,8 +346,6 @@ class StoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int duration = Random().nextInt(11) + 5;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(story.username),
@@ -406,8 +391,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    duration =
-        Random().nextInt(11) + 5; // Random duration between 5 and 15 seconds
+    duration = Random().nextInt(11) + 5;
     _controller = VideoPlayerController.file(widget.videoFile)
       ..initialize().then((_) {
         setState(() {});
