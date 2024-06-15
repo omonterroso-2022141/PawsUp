@@ -163,7 +163,7 @@ class AddressSearch extends SearchDelegate<String> {
 
 // Clase principal del mapa
 class MapGoogle extends StatefulWidget {
-  const MapGoogle({Key? key}) : super(key: key);
+  const MapGoogle({super.key});
 
   @override
   _MapGoogleState createState() => _MapGoogleState();
@@ -174,7 +174,7 @@ class _MapGoogleState extends State<MapGoogle>
   late GoogleMapController _mapController;
   final Set<Marker> _markers = {};
   LatLng _lastMapPosition = const LatLng(
-      14.634915, -90.506882); // Coordenadas de la Ciudad de Guatemala
+      14.626115, -90.535328); // Coordenadas de la Ciudad de Guatemala
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   bool _isSatellite = false;
@@ -278,7 +278,7 @@ class _MapGoogleState extends State<MapGoogle>
                       height: 200,
                       width: 150,
                       /*child: Image.network(
-                      'https://your-image-url/${mascota.imagen}',
+                      'https://back-paws-up-cloud.vercel.app/imagen/getImagen/${mascota.imagen}',
                       fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child,
                           ImageChunkEvent? loadingProgress) {

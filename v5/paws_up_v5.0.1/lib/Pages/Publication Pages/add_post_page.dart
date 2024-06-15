@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:paws_up_v1/Pages/Main%20Page/normal_feed_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/categoria.dart';
 
@@ -162,6 +162,9 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   Future<List<Category>> fetchCategories() async {
+    print(
+        'Token actual: $userToken'); // Verifica el token actual antes de la solicitud
+
     final response = await http.get(
       Uri.parse(
           'https://back-paws-up-cloud.vercel.app/Categoria/listCategoryUsuario'),
@@ -170,12 +173,14 @@ class _AddPostPageState extends State<AddPostPage> {
 
     if (response.statusCode == 200) {
       final dynamic data = jsonDecode(response.body);
-      print(data);
+      print(
+          'Respuesta del servidor: $data'); // Verifica la respuesta del servidor
 
       final categoryData = data['categorys'];
       final category = Category.fromJson(categoryData);
       return [category];
     } else {
+      print('Error en la solicitud: ${response.statusCode}');
       throw Exception('Error al obtener las categorías');
     }
   }
@@ -188,101 +193,53 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   void _submitPost({required bool someParameter}) async {
+    if (userToken.isEmpty) {
+      print('Token no disponible.');
+      return;
+    }
+
     if (someParameter) {
-      if (userToken.isEmpty) {
-        print('Token no disponible.');
+      if (_mediaFiles == null || _mediaFiles!.isEmpty) {
+        print('No se ha seleccionado ninguna imagen o video.');
         return;
       }
+    }
 
-      /*if (_mediaFiles == null || _mediaFiles!.isEmpty) {
-        print('No se ha seleccionado ninguna imagen.');
-        return;
-      }*/
-      print(selectedCategoryId);
+    try {
       var url = Uri.parse(
           'https://back-paws-up-cloud.vercel.app/Publicacion/addPublicacion');
+      // Add headers
 
-      try {
-        var headers = {'Authorization': userToken, 'Accept': '*/*'};
+      var request = http.MultipartRequest('POST', url)
+        ..fields['autor'] = userToken
+        ..fields['descripcion'] = descriptionController.text
+        ..fields['categoria'] = selectedCategoryId ?? '';
 
-        var request = http.MultipartRequest('POST', url)
-          ..fields['autor'] = userToken
-          ..fields['descripcion'] = descriptionController.text
-          ..fields['categoria'] = selectedCategoryId ?? '';
-
-        // Agrega la imagen al cuerpo de la solicitud
-        /*for (var file in _mediaFiles!) {
-          // Detecta el tipo MIME del archivo
-          String mimeType = lookupMimeType(file.path) ?? 'application/octet-stream';
+      // Agregar los archivos multimedia al cuerpo de la solicitud
+      if (_mediaFiles != null && _mediaFiles!.isNotEmpty) {
+        for (var file in _mediaFiles!) {
+          String mimeType =
+              lookupMimeType(file.path) ?? 'application/octet-stream';
           request.files.add(await http.MultipartFile.fromPath(
-            'imagenes',
+            'imagenes', // Nombre del campo esperado en el backend para las imágenes
             file.path,
             contentType: MediaType.parse(mimeType),
           ));
-        }*/
-
-        request.headers.addAll(headers);
-
-        var response = await request.send();
-
-        if (response.statusCode == 200) {
-          print('Publicación exitosa');
-
-          var responseData = await response.stream.bytesToString();
-          print(responseData);
-        } else {
-          print('Error al publicar: ${response.reasonPhrase}');
-          var responseData = await response.stream.bytesToString();
-          print(responseData);
         }
-      } catch (error) {
-        print('Error: $error');
       }
-    } else {
-      if (userToken.isEmpty) {
-        print('Token no disponible.');
-        return;
+      request.headers['Authorization'] = userToken;
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('Publicación exitosa');
+      } else {
+        print('Error al publicar: ${response.statusCode}');
+        var responseData = await response.stream.bytesToString();
+        print(responseData);
       }
-
-      var url =
-          Uri.parse('https://back-paws-up-cloud.vercel.app/Mascota/addMascota');
-
-      try {
-        var headers = {
-          'Authorization': userToken,
-          'Accept': '*/*',
-          'Content-Type': 'application/json'
-        };
-
-        // Hacer la solicitud POST con los datos JSON como cuerpo
-        print(locationController.text);
-        var response = await http.post(url,
-            headers: headers,
-            body: json.encode({
-              'nombre':
-                  nameController.text.isEmpty ? 'Nulo' : nameController.text,
-              'edad': ageController.text.isEmpty ? 'Nulo' : ageController.text,
-              'descripcion': descriptionController.text.isEmpty
-                  ? 'Nulo'
-                  : descriptionController.text,
-              'tutor': userToken,
-              'ubicacion': locationController.text,
-              'sexo': selectedSex ?? ''
-            }));
-
-        if (response.statusCode == 200) {
-          print('Publicación exitosa');
-
-          var responseData = utf8.decode(response.bodyBytes);
-          print(responseData);
-        } else {
-          print('Error al publicar: ${response.reasonPhrase}');
-          var responseData = utf8.decode(response.bodyBytes);
-          print(responseData);
-        }
-      } catch (error) {
-        print('Error: $error');
-      }
+    } catch (error) {
+      print('Error: $error');
     }
   }
 
@@ -439,6 +396,8 @@ class _AddPostPageState extends State<AddPostPage> {
                     child: const Text('Publicar'),
                   ),
                 ] else ...[
+                  _buildTextField(nameController, 'Título'),
+                  const SizedBox(height: 16.0),
                   _buildTextField(descriptionController, 'Descripción',
                       maxLines: 3),
                   const SizedBox(height: 16.0),
@@ -468,10 +427,7 @@ class _AddPostPageState extends State<AddPostPage> {
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
-                    onPressed: () {
-                      _submitPost(someParameter: true);
-                      NormalFeedPage();
-                    },
+                    onPressed: () => _submitPost(someParameter: true),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: const Color(0xFF5BFFD3),

@@ -111,6 +111,7 @@ class PostWidget extends StatelessWidget {
   final Publicacion publicacion;
 
   const PostWidget({
+    super.key,
     required this.publicacion,
   });
 
