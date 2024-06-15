@@ -26,12 +26,13 @@ class Publicacion {
 
   factory Publicacion.fromJson(Map<String, dynamic> json) {
     return Publicacion(
-      id: json['_id'] ?? '',
+      id: json['id'] ?? '',
       autor: json['autor'] ?? '',
       descripcion: json['descripcion'] ?? '',
       horaPublicado: json['horaPublicado'] ?? '',
-      imagenes:
-          json['imagenes'] != null ? List<String>.from(json['imagenes']) : [],
+      imagenes: json['imagenes'] != null
+          ? List<String>.from(json['imagenes'])
+          : [],
       likes: json['like'] != null ? List<String>.from(json['like']) : [],
       dislikes:
           json['dislike'] != null ? List<String>.from(json['dislike']) : [],
@@ -39,6 +40,16 @@ class Publicacion {
           ? List<String>.from(json['comentarios'])
           : [],
     );
+  }
+}
+
+Future<String> fetchImagenUrl(String imagen) async {
+  final response = await http.get(Uri.parse(
+      'https://back-paws-up-cloud.vercel.app/imagen/getImagen/$imagen'));
+  if (response.statusCode == 200) {
+    return json.decode(response.body)['result'];
+  } else {
+    throw Exception('Failed to load imagen URL');
   }
 }
 
@@ -50,7 +61,25 @@ Future<List<Publicacion>> fetchPublicaciones() async {
   if (response.statusCode == 200) {
     final List<dynamic> publicacionesJson =
         json.decode(response.body)['publicacionesReestructuradas'];
-    return publicacionesJson.map((json) => Publicacion.fromJson(json)).toList();
+    List<Publicacion> publicaciones = [];
+    for (var json in publicacionesJson) {
+      Publicacion publicacion = Publicacion.fromJson(json);
+      List<String> imagenUrls = [];
+      for (var imagen in publicacion.imagenes) {
+        imagenUrls.add(await fetchImagenUrl(imagen));
+      }
+      publicaciones.add(Publicacion(
+        id: publicacion.id,
+        autor: publicacion.autor,
+        descripcion: publicacion.descripcion,
+        horaPublicado: publicacion.horaPublicado,
+        imagenes: imagenUrls,
+        likes: publicacion.likes,
+        dislikes: publicacion.dislikes,
+        comentarios: publicacion.comentarios,
+      ));
+    }
+    return publicaciones;
   } else {
     throw Exception('Failed to load publicaciones');
   }
@@ -181,7 +210,7 @@ class _PostWidgetState extends State<PostWidget> {
                       widget.publicacion.autor,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF5BFFD3), // Cambiado a rojo
+                        color: Color(0xFF5BFFD3),
                         fontSize: 18,
                         fontFamily: "Hey",
                       ),
@@ -217,13 +246,23 @@ class _PostWidgetState extends State<PostWidget> {
             child: ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(15)),
-              child: Image.network(
-                widget.publicacion.imagenes.isNotEmpty
-                    ? widget.publicacion.imagenes[0]
-                    : 'https://via.placeholder.com/400x300',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 430,
+              child: Column(
+                children: widget.publicacion.imagenes.map((imagenUrl) {
+                  return Image.network(
+                    imagenUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 430,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Image(
+                        image: AssetImage('images/placeholder.png'),
+                        width: double.infinity,
+                        height: 430,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  );
+                }).toList(),
               ),
             ),
           ),
@@ -251,14 +290,6 @@ class _PostWidgetState extends State<PostWidget> {
                         style:
                             const TextStyle(fontSize: 15, color: Colors.white)),
                     const SizedBox(width: 16),
-                    /*IconButton(
-                      icon: const Icon(Icons.comment_outlined,
-                          color: Color(0xFF5BFFD3)),
-                      onPressed: widget.onComment,
-                    ),*/
-                    /*Text('${widget.publicacion.comentarios.length}',
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.white)),*/
                   ],
                 ),
                 Row(
@@ -286,7 +317,7 @@ class _PostWidgetState extends State<PostWidget> {
         children: widget.publicacion.comentarios.map((comment) {
           return Text(
             comment,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
           );
         }).toList(),
       ),
@@ -297,179 +328,22 @@ class _PostWidgetState extends State<PostWidget> {
 class CommentsPage extends StatefulWidget {
   final String publicacionId;
 
-  CommentsPage({required this.publicacionId});
+  const CommentsPage({super.key, required this.publicacionId});
 
   @override
   _CommentsPageState createState() => _CommentsPageState();
 }
 
-class _CommentsPageState extends State<CommentsPage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  late TextEditingController _commentController;
-  List<dynamic> _comments = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
-    _controller.forward();
-    _commentController = TextEditingController();
-    fetchComments();
-  }
-
-  Future<void> fetchComments() async {
-    try {
-      final response = await http.get(Uri.parse(
-          'https://back-paws-up-cloud.vercel.app/Comentario/viewComentarioOfPublicacion/${widget.publicacionId}'));
-      if (response.statusCode == 200) {
-        setState(() {
-          _comments = json.decode(response.body)['comentarios'];
-        });
-      } else {
-        throw Exception('Failed to load comments');
-      }
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> addComment(String commentText) async {
-    try {
-      final response = await http.post(
-        Uri.parse(
-            'https://back-paws-up-cloud.vercel.app/Comentario/addComentario/${widget.publicacionId}'),
-        body: {'descripcion': commentText},
-      );
-      if (response.statusCode == 200) {
-        fetchComments(); // Refresh comments after adding a new one
-      } else {
-        throw Exception('Failed to add comment');
-      }
-    } catch (error) {
-      print(error);
-    }
-  }
-
+class _CommentsPageState extends State<CommentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Comentarios',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('Comentarios'),
       ),
-      body: FadeTransition(
-        opacity: _animation,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _comments.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const CircleAvatar(
-                          backgroundImage: const NetworkImage(
-                              'https://via.placeholder.com/150'),
-                          radius: 20.0,
-                        ),
-                        const SizedBox(width: 10.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Usuario ${_comments[index]['autor']}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 5.0),
-                              Text(
-                                _comments[index]['descripcion'],
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            const Divider(height: 1.0, color: Colors.grey),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    backgroundImage:
-                        NetworkImage('https://via.placeholder.com/150'),
-                    radius: 20.0,
-                  ),
-                  const SizedBox(width: 10.0),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: TextField(
-                          controller: _commentController,
-                          decoration: InputDecoration(
-                            hintText: 'Añadir un comentario...',
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(color: Colors.grey.shade600),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.send, color: Colors.blue),
-                    onPressed: () {
-                      String commentText = _commentController.text.trim();
-                      if (commentText.isNotEmpty) {
-                        addComment(commentText);
-                        _commentController.clear();
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      body: Center(
+        child: Text('Comentarios para la publicación ${widget.publicacionId}'),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
