@@ -6,22 +6,31 @@ import 'dart:io';
 import 'dart:math';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
 class Story {
   final String username;
-  final String url;
-  final DateTime time;
-  final bool isVideo;
+  List<StoryItem> items;
   bool seen;
 
   Story({
     required this.username,
+    required this.items,
+    this.seen = false,
+  });
+}
+
+class StoryItem {
+  final String url;
+  final DateTime time;
+  final bool isVideo;
+
+  StoryItem({
     required this.url,
     required this.time,
     required this.isVideo,
-    this.seen = false,
   });
 }
 
@@ -29,64 +38,112 @@ class MyApp extends StatelessWidget {
   final List<Story> stories = [
     Story(
       username: "Bachac",
-      url:
-          "https://img.buzzfeed.com/buzzfeed-static/static/2017-09/13/12/asset/buzzfeed-prod-fastlane-03/sub-buzz-4660-1505320964-2.png?downsize=700%3A%2A&output-quality=auto&output-format=auto",
-      time: DateTime.now().subtract(Duration(hours: 10)),
-      isVideo: false,
+      items: [
+        StoryItem(
+          url:
+              "https://img.buzzfeed.com/buzzfeed-static/static/2017-09/13/12/asset/buzzfeed-prod-fastlane-03/sub-buzz-4660-1505320964-2.png?downsize=700%3A%2A&output-quality=auto&output-format=auto",
+          time: DateTime.now().subtract(Duration(hours: 10)),
+          isVideo: false,
+        ),
+      ],
     ),
     Story(
-        username: "Yerick",
-        url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSndVZhWXuWgeTSh0nTVxm_84bULEUYwezEQ&s",
-        time: DateTime.now().subtract(Duration(hours: 3)),
-        isVideo: false),
+      username: "Yerick",
+      items: [
+        StoryItem(
+          url:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSndVZhWXuWgeTSh0nTVxm_84bULEUYwezEQ&s",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Miguelito",
-        url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGv0ZIrLidHrXmxdSY38qwW3_FyQZhJo-sFQ&s",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Miguelito",
+      items: [
+        StoryItem(
+          url: "https://fcb-abj-pre.s3.amazonaws.com/img/jugadors/MESSI.jpg",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Ruben",
-        url:
-            "https://i0.wp.com/dibujokawaii.com/wp-content/uploads/2022/12/como-dibujar-pinguino-kawaii.png?w=1000&ssl=1",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Ruben",
+      items: [
+        StoryItem(
+          url:
+              "https://files.lamega.com.rcnra-dev.com/assets/public/styles/d_img_1200x630/public/media/image/image/2023-08/Cheems%20el%20perrito%20meme%2C%20muri%C3%B3.jpg?h=3685aca4&itok=4f9owBBd",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Joshua",
-        url: "https://media.tenor.com/MjYaFKjKQakAAAAM/dapper-dog.gif",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Joshua",
+      items: [
+        StoryItem(
+          url:
+              "https://phantom-marca-mx.unidadeditorial.es/878637848d01b60815704747ecab82ae/resize/1200/f/webp/mx/assets/multimedia/imagenes/2023/12/12/17023578484660.jpg",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Josue",
-        url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyXzjjPPHwioU-Wr_NEE7UTmQUejmqE9HEwA&s",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Josue",
+      items: [
+        StoryItem(
+          url:
+              "https://fotografias.lasexta.com/clipping/cmsimages02/2023/04/03/D298398C-1178-4C77-A617-B741456A6C68/famoso-meme-twitter-que-inspira-logo-que-cambiado_104.jpg?crop=383,383,x149,y0&width=1200&height=1200&optimize=low&format=webply",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Brayna",
-        url:
-            "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1252512247-645a3670a0276.jpg?crop=1xw:1xh;center,top&resize=980:*",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Brayna",
+      items: [
+        StoryItem(
+          url:
+              "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1252512247-645a3670a0276.jpg?crop=1xw:1xh;center,top&resize=980:*",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Miim",
-        url:
-            "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1469836274-645a3672bc1be.jpg?crop=1xw:1xh;center,top&resize=980:*",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Miim",
+      items: [
+        StoryItem(
+          url:
+              "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1469836274-645a3672bc1be.jpg?crop=1xw:1xh;center,top&resize=980:*",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Fernando",
-        url:
-            "https://m.media-amazon.com/images/I/61pHnfSM6CL._AC_UF894,1000_QL80_.jpg",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false),
+      username: "Fernando",
+      items: [
+        StoryItem(
+          url: "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
     Story(
-        username: "Vanesa",
-        url:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpcnUd4DnHAsDY3i3_Cf2GEUp_ungbJ30i6-DqrVw8KVY-RbLDfXfGgdlO8kPT9YuB5UQ&usqp=CAU",
-        time: DateTime.now().subtract(Duration(hours: 10)),
-        isVideo: false)
+      username: "Vanesa",
+      items: [
+        StoryItem(
+          url:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaSa9liAppa-xOSXyqtuB-HUFz3O4EYFLlrA&s",
+          time: DateTime.now().subtract(Duration(hours: 3)),
+          isVideo: false,
+        ),
+      ],
+    ),
   ];
 
   @override
@@ -112,15 +169,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final ImagePicker _picker = ImagePicker();
-  XFile? _imageFile;
-  XFile? _videoFile;
+  List<StoryItem> _newItems = [];
 
-  ImageProvider _buildImageProvider(Story story) {
+  ImageProvider _buildImageProvider(StoryItem item) {
     try {
-      if (story.url.startsWith('http')) {
-        return NetworkImage(story.url);
+      if (item.url.startsWith('http')) {
+        return NetworkImage(item.url);
       } else {
-        return FileImage(File(story.url));
+        return FileImage(File(item.url));
       }
     } catch (e) {
       print('Error loading image: $e');
@@ -135,9 +191,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     if (pickedFile != null) {
       setState(() {
-        _imageFile = pickedFile;
+        _newItems.add(StoryItem(
+          url: pickedFile.path,
+          time: DateTime.now(),
+          isVideo: false,
+        ));
       });
-      _addStory(imagePath: pickedFile.path);
+      _addStoryItem();
     }
   }
 
@@ -147,9 +207,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     if (pickedFile != null) {
       setState(() {
-        _videoFile = pickedFile;
+        _newItems.add(StoryItem(
+          url: pickedFile.path,
+          time: DateTime.now(),
+          isVideo: true,
+        ));
       });
-      _addStory(videoPath: pickedFile.path);
+      _addStoryItem();
     }
   }
 
@@ -159,38 +223,24 @@ class _MyHomePageState extends State<MyHomePage> {
     return difference.inHours >= 24;
   }
 
-  void _reorderStories() {
-    final seenStories = <Story>[];
-    final unseenStories = <Story>[];
-
-    for (final story in widget.stories) {
-      if (story.seen) {
-        seenStories.add(story);
-      } else {
-        unseenStories.add(story);
-      }
-    }
-
-    widget.stories.clear();
-    widget.stories.addAll(seenStories);
-    widget.stories.addAll(unseenStories);
-  }
-
   void _markAsSeen(int index) {
     setState(() {
       widget.stories[index].seen = true;
     });
   }
 
-  void _addStory({String? imagePath, String? videoPath}) {
-    final newStory = Story(
-      username: 'New User',
-      url: imagePath ?? videoPath!,
-      time: DateTime.now(),
-      isVideo: videoPath != null,
-    );
+  void _addStoryItem() {
     setState(() {
-      widget.stories.add(newStory);
+      final index =
+          widget.stories.indexWhere((story) => story.username == 'New User');
+
+      if (index != -1) {
+        widget.stories[index].items.addAll(_newItems);
+      } else {
+        final newStory = Story(username: 'New User', items: _newItems);
+        widget.stories.add(newStory);
+      }
+      _newItems = [];
     });
   }
 
@@ -271,9 +321,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _startStoryTimer(int index) {
+    Future.delayed(Duration(seconds: 5), () {
+      if (mounted) {
+        if (index < widget.stories.length - 1) {
+          _showStory(widget.stories[index + 1]);
+        } else {
+          Navigator.of(context).pop();
+        }
+      }
+    });
+  }
+
+  void _showStory(Story story) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StoryScreen(story: story),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    _reorderStories();
     return Scaffold(
       appBar: AppBar(
         title: Text('Historias'),
@@ -283,18 +353,14 @@ class _MyHomePageState extends State<MyHomePage> {
         itemCount: widget.stories.length,
         itemBuilder: (BuildContext context, int index) {
           final story = widget.stories[index];
+          final firstItem = story.items.first;
           return GestureDetector(
             onTap: () {
-              if (isStoryExpired(story.time)) {
+              if (isStoryExpired(firstItem.time)) {
                 _showExpiredStoryDialog();
               } else {
                 _markAsSeen(index);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StoryScreen(story: story),
-                  ),
-                );
+                _showStory(story);
               }
             },
             child: Padding(
@@ -304,7 +370,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Stack(
                     children: [
                       CircleAvatar(
-                        backgroundImage: _buildImageProvider(story),
+                        backgroundImage: _buildImageProvider(firstItem),
                         radius: 30,
                       ),
                       Positioned(
@@ -357,16 +423,77 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class StoryScreen extends StatelessWidget {
+class StoryScreen extends StatefulWidget {
   final Story story;
 
   const StoryScreen({required this.story});
 
   @override
+  _StoryScreenState createState() => _StoryScreenState();
+}
+
+class _StoryScreenState extends State<StoryScreen> {
+  late PageController _pageController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _startStoryTimer();
+  }
+
+  void _startStoryTimer() {
+    Future.delayed(Duration(seconds: 5), () {
+      if (mounted) {
+        if (_currentIndex < widget.story.items.length - 1) {
+          _pageController.nextPage(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeIn,
+          );
+          setState(() {
+            _currentIndex++;
+          });
+          _startStoryTimer();
+        } else {
+          Navigator.of(context).pop();
+        }
+      }
+    });
+  }
+
+  void _navigateToNextStory() {
+    if (_currentIndex < widget.story.items.length - 1) {
+      _pageController.nextPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+      setState(() {
+        _currentIndex++;
+      });
+      _startStoryTimer();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _navigateToPreviousStory() {
+    if (_currentIndex > 0) {
+      _pageController.previousPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+      setState(() {
+        _currentIndex--;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(story.username),
+        title: Text(widget.story.username),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -374,20 +501,49 @@ class StoryScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Center(
-        child: story.isVideo
-            ? VideoPlayerWidget(videoFile: File(story.url))
-            : (story.url.startsWith('http')
-                ? Image.network(story.url,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity)
-                : Image.file(
-                    File(story.url),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                  )),
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: widget.story.items.length,
+            itemBuilder: (context, index) {
+              final item = widget.story.items[index];
+              return Center(
+                child: item.isVideo
+                    ? VideoPlayerWidget(videoFile: File(item.url))
+                    : (item.url.startsWith('http')
+                        ? Image.network(item.url,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity)
+                        : Image.file(
+                            File(item.url),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          )),
+              );
+            },
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: _navigateToPreviousStory,
+            ),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: IconButton(
+              icon: Icon(Icons.arrow_forward_ios, color: Colors.white),
+              onPressed: _navigateToNextStory,
+            ),
+          ),
+        ],
       ),
     );
   }
