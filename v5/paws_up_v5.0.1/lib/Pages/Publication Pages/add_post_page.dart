@@ -206,12 +206,11 @@ class _AddPostPageState extends State<AddPostPage> {
     }
 
     try {
+      print(userToken);
       var url = Uri.parse(
           'https://back-paws-up-cloud.vercel.app/Publicacion/addPublicacion');
-      // Add headers
-
+      
       var request = http.MultipartRequest('POST', url)
-        ..fields['autor'] = userToken
         ..fields['descripcion'] = descriptionController.text
         ..fields['categoria'] = selectedCategoryId ?? '';
 
@@ -221,18 +220,20 @@ class _AddPostPageState extends State<AddPostPage> {
           String mimeType =
               lookupMimeType(file.path) ?? 'application/octet-stream';
           request.files.add(await http.MultipartFile.fromPath(
-            'imagenes', // Nombre del campo esperado en el backend para las imágenes
+            'imagen', // Nombre del campo esperado en el backend para la imagen
             file.path,
             contentType: MediaType.parse(mimeType),
           ));
         }
       }
-      request.headers['Authorization'] = userToken;
+      request.headers['Authorization'] = userToken; // Añade el token de autenticación si es necesario
 
       var response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Publicación exitosa');
+        var responseData = await http.Response.fromStream(response);
+        var responseBody = json.decode(responseData.body);
+        print('Publicación exitosa: $responseBody');
       } else {
         print('Error al publicar: ${response.statusCode}');
         var responseData = await response.stream.bytesToString();
@@ -242,6 +243,7 @@ class _AddPostPageState extends State<AddPostPage> {
       print('Error: $error');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
