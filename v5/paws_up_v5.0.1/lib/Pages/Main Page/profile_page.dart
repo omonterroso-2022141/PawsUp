@@ -88,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage>
       }
 
       final response = await http.get(
-        Uri.parse('https://back-paws-up-cloud.vercel.app/User/miPerfil'),
+        Uri.parse('https://back-paws-up-cloud-rho.vercel.app/User/miPerfil'),
         headers: {'Authorization': token},
       );
 
@@ -118,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage>
 
       final response = await http.get(
         Uri.parse(
-            'https://back-paws-up-cloud.vercel.app/Publicacion/viewPublicacionPropia'),
+            'https://back-paws-up-cloud-rho.vercel.app/Publicacion/viewPublicacionPropia'),
         headers: {'Authorization': token},
       );
 

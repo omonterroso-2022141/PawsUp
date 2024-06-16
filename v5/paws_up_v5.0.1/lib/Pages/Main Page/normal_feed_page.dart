@@ -45,8 +45,9 @@ class Publicacion {
 
 Future<String> fetchImagenUrl(String imagen) async {
   final response = await http.get(Uri.parse(
-      'https://back-paws-up-cloud.vercel.app/imagen/getImagen/$imagen'));
+      'https://back-paws-up-cloud-rho.vercel.app/imagen/getImagen/$imagen'));
   if (response.statusCode == 200) {
+    print(response.body);
     return json.decode(response.body)['result'];
   } else {
     throw Exception('Failed to load imagen URL');
@@ -55,7 +56,7 @@ Future<String> fetchImagenUrl(String imagen) async {
 
 Future<List<Publicacion>> fetchPublicaciones() async {
   final response = await http.get(Uri.parse(
-      'https://back-paws-up-cloud.vercel.app/Publicacion/viewPublicacion'));
+      'https://back-paws-up-cloud-rho.vercel.app/Publicacion/viewPublicacion'));
   debugPrint(response.body);
 
   if (response.statusCode == 200) {

@@ -138,7 +138,7 @@ class _ProfileUpdateFormsState extends State<ProfileUpdateForms> {
 
     if (token != null) {
       final response = await http.get(
-        Uri.parse('https://back-paws-up-cloud.vercel.app/User/miPerfil'),
+        Uri.parse('https://back-paws-up-cloud-rho.vercel.app/User/miPerfil'),
         headers: {'Authorization': token},
       );
 
@@ -174,7 +174,7 @@ class _ProfileUpdateFormsState extends State<ProfileUpdateForms> {
 
       if (token != null) {
         final response = await http.put(
-          Uri.parse('https://back-paws-up-cloud.vercel.app/User/updateUser'),
+          Uri.parse('https://back-paws-up-cloud-rho.vercel.app/User/updateUser'),
           headers: {
             'Authorization': token,
             'Content-Type': 'application/json',

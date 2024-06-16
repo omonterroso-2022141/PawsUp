@@ -36,7 +36,7 @@ class Mascota {
 // Función para obtener las mascotas desde el backend
 Future<List<Mascota>> fetchMascotas() async {
   final response = await http.get(
-      Uri.parse('https://back-paws-up-cloud.vercel.app/Mascota/viewMascota'));
+      Uri.parse('https://back-paws-up-cloud-rho.vercel.app/Mascota/viewMascota'));
 
   if (response.statusCode == 200) {
     final List<dynamic> mascotasJson = json.decode(response.body)['mascotas'];
@@ -278,7 +278,7 @@ class _MapGoogleState extends State<MapGoogle>
                       height: 200,
                       width: 150,
                       /*child: Image.network(
-                      'https://back-paws-up-cloud.vercel.app/imagen/getImagen/${mascota.imagen}',
+                      'https://back-paws-up-cloud-rho.vercel.app/imagen/getImagen/${mascota.imagen}',
                       fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child,
                           ImageChunkEvent? loadingProgress) {

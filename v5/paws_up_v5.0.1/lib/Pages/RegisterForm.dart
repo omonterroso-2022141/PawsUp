@@ -127,7 +127,7 @@ class _RegisterFormsState extends State<RegisterForms> {
   Future<void> _registerUser() async {
     if (_formKey.currentState!.validate() && _acceptTerms) {
       final response = await http.post(
-        Uri.parse('https://back-paws-up-cloud.vercel.app/User/register'),
+        Uri.parse('https://back-paws-up-cloud-rho.vercel.app/User/register'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

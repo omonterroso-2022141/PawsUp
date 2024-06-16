@@ -167,7 +167,7 @@ class _AddPostPageState extends State<AddPostPage> {
 
     final response = await http.get(
       Uri.parse(
-          'https://back-paws-up-cloud.vercel.app/Categoria/listCategoryUsuario'),
+          'https://back-paws-up-cloud-rho.vercel.app/Categoria/listCategoryUsuario'),
       headers: {'Authorization': userToken},
     );
 
@@ -193,55 +193,111 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   void _submitPost({required bool someParameter}) async {
-    if (userToken.isEmpty) {
-      print('Token no disponible.');
-      return;
-    }
+    if(someParameter){
+      
+      if (userToken.isEmpty) {
+        print('Token no disponible.');
+        return;
+      }
 
-    if (someParameter) {
       if (_mediaFiles == null || _mediaFiles!.isEmpty) {
         print('No se ha seleccionado ninguna imagen o video.');
         return;
       }
-    }
 
-    try {
-      print(userToken);
-      var url = Uri.parse(
-          'https://back-paws-up-cloud.vercel.app/Publicacion/addPublicacion');
-      
-      var request = http.MultipartRequest('POST', url)
-        ..fields['descripcion'] = descriptionController.text
-        ..fields['categoria'] = selectedCategoryId ?? '';
+      try {
+        print(userToken);
+        var url = Uri.parse(
+            'https://back-paws-up-cloud-rho.vercel.app/Publicacion/addPublicacion');
+        
+        var request = http.MultipartRequest('POST', url)
+          ..fields['descripcion'] = descriptionController.text
+          ..fields['categoria'] = selectedCategoryId ?? '';
 
-      // Agregar los archivos multimedia al cuerpo de la solicitud
-      if (_mediaFiles != null && _mediaFiles!.isNotEmpty) {
-        for (var file in _mediaFiles!) {
-          String mimeType =
-              lookupMimeType(file.path) ?? 'application/octet-stream';
-          request.files.add(await http.MultipartFile.fromPath(
-            'imagen', // Nombre del campo esperado en el backend para la imagen
-            file.path,
-            contentType: MediaType.parse(mimeType),
-          ));
+        // Agregar los archivos multimedia al cuerpo de la solicitud
+        if (_mediaFiles != null && _mediaFiles!.isNotEmpty) {
+          for (var file in _mediaFiles!) {
+            String mimeType =
+                lookupMimeType(file.path) ?? 'application/octet-stream';
+            request.files.add(await http.MultipartFile.fromPath(
+              'imagen', // Nombre del campo esperado en el backend para la imagen
+              file.path,
+              contentType: MediaType.parse(mimeType),
+            ));
+          }
         }
-      }
-      request.headers['Authorization'] = userToken; // Añade el token de autenticación si es necesario
+        request.headers['Authorization'] = userToken; // Añade el token de autenticación si es necesario
 
-      var response = await request.send();
+        var response = await request.send();
 
-      if (response.statusCode == 200) {
-        var responseData = await http.Response.fromStream(response);
-        var responseBody = json.decode(responseData.body);
-        print('Publicación exitosa: $responseBody');
-      } else {
-        print('Error al publicar: ${response.statusCode}');
-        var responseData = await response.stream.bytesToString();
-        print(responseData);
+        if (response.statusCode == 200) {
+          var responseData = await http.Response.fromStream(response);
+          var responseBody = json.decode(responseData.body);
+          print('Publicación exitosa: $responseBody');
+        } else {
+          print('Error al publicar: ${response.statusCode}');
+          var responseData = await response.stream.bytesToString();
+          print(responseData);
+        }
+      } catch (error) {
+        print('Error: $error');
       }
-    } catch (error) {
-      print('Error: $error');
+
+    }else{
+
+      if (userToken.isEmpty) {
+        print('Token no disponible.');
+        return;
+      }
+
+      if (_mediaFiles == null || _mediaFiles!.isEmpty) {
+        print('No se ha seleccionado ninguna imagen o video.');
+        return;
+      }
+
+      try {
+        print(userToken);
+        var url = Uri.parse(
+            'https://back-paws-up-cloud-rho.vercel.app/Mascota/addMascota');
+        
+        var request = http.MultipartRequest('POST', url)
+          ..fields['nombre'] = nameController.text
+          ..fields['edad'] = ageController.text
+          ..fields['ubicacion'] = locationController.text
+          ..fields['descripcion'] = descriptionController.text
+          ..fields['sexo'] = selectedSex ?? '';
+
+        // Agregar los archivos multimedia al cuerpo de la solicitud
+        if (_mediaFiles != null && _mediaFiles!.isNotEmpty) {
+          for (var file in _mediaFiles!) {
+            String mimeType =
+                lookupMimeType(file.path) ?? 'application/octet-stream';
+            request.files.add(await http.MultipartFile.fromPath(
+              'imagen', // Nombre del campo esperado en el backend para la imagen
+              file.path,
+              contentType: MediaType.parse(mimeType),
+            ));
+          }
+        }
+        request.headers['Authorization'] = userToken; // Añade el token de autenticación si es necesario
+
+        var response = await request.send();
+
+        if (response.statusCode == 200) {
+          var responseData = await http.Response.fromStream(response);
+          var responseBody = json.decode(responseData.body);
+          print('Publicación exitosa: $responseBody');
+        } else {
+          print('Error al publicar: ${response.statusCode}');
+          var responseData = await response.stream.bytesToString();
+          print(responseData);
+        }
+      } catch (error) {
+        print('Error: $error');
+      }
+
     }
+    
   }
 
 

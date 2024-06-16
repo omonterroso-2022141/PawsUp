@@ -8,7 +8,7 @@ class Publicacion {
   final String horaPublicado;
   final String nombre;
   final String edad;
-  final String imagen;
+  String imagen;
   final String descripcion;
   final String sexo;
 
@@ -25,9 +25,9 @@ class Publicacion {
 
   factory Publicacion.fromJson(Map<String, dynamic> json) {
     return Publicacion(
-      id: json['_id']?.toString() ?? '',
+      id: json['id']?.toString() ?? '',
       autor: json['tutor']?.toString() ?? '',
-      horaPublicado: json['horaPublicado']?.toString() ?? '',
+      horaPublicado: json['fechaPublicacion']?.toString() ?? '',
       nombre: json['nombre']?.toString() ?? '',
       edad: json['edad']?.toString() ?? '',
       imagen: json['imagen']?.toString() ?? '',
@@ -37,16 +37,36 @@ class Publicacion {
   }
 }
 
+Future<String> fetchImageUrl(String imageName) async {
+  final response = await http.get(Uri.parse(
+      'https://back-paws-up-cloud-rho.vercel.app/imagen/getImagen/$imageName'));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = json.decode(response.body);
+    return data['result']?.toString() ?? 'https://via.placeholder.com/400x300';
+  } else {
+    return 'https://via.placeholder.com/400x300';
+  }
+}
+
 Future<List<Publicacion>> fetchPublicaciones() async {
   final response = await http.get(
-      Uri.parse('https://back-paws-up-cloud.vercel.app/Mascota/viewMascota'));
+      Uri.parse('https://back-paws-up-cloud-rho.vercel.app/Mascota/viewMascota'));
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
 
     if (data['mascotas'] is List) {
       final List<dynamic> mascotasJson = data['mascotas'];
-      return mascotasJson.map((json) => Publicacion.fromJson(json)).toList();
+      List<Publicacion> publicaciones = [];
+
+      for (var json in mascotasJson) {
+        Publicacion publicacion = Publicacion.fromJson(json);
+        publicacion.imagen = await fetchImageUrl(publicacion.imagen);
+        publicaciones.add(publicacion);
+      }
+
+      return publicaciones;
     } else {
       throw Exception('La respuesta no contiene una lista de mascotas');
     }
@@ -156,7 +176,7 @@ class PostWidget extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 8,
+                        fontSize: 18,
                         fontFamily: "Hey",
                       ),
                     ),
@@ -177,7 +197,6 @@ class PostWidget extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 250,
-                // Adjusted height to avoid potential issues
                 loadingBuilder: (BuildContext context, Widget child,
                     ImageChunkEvent? loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -208,7 +227,7 @@ class PostWidget extends StatelessWidget {
                         text: 'Mascota: ',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF5BFFD3), // Color rojo
+                          color: Color(0xFF5BFFD3), // Color turquesa
                           fontFamily: "Hey",
                         ),
                       ),
